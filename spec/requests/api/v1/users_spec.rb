@@ -7,7 +7,6 @@ RSpec.describe 'Users API', type: :request do
   before { host! 'api.qualquerdominio.dev' }
 
   describe 'GET /users:id' do
-
     before do
       headers = { 'Accept' => 'application/vnd.taskmanager.v1' }
       get "/users/#{user_id}", params: {}, headers: headers
@@ -30,10 +29,38 @@ RSpec.describe 'Users API', type: :request do
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
       end
-
     end
-
   end
 
+  describe 'POST /users' do
+    before do
+      headers = { 'Accept' => 'application/vnd.taskmanager.v1' }
+      post '/users', params: { user: user_params }, headers: headers
+    end
+    context 'when the request params are valid' do
+      let(:user_params) { FactoryGirl.attributes_for(:user) }
 
+      it 'return status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'return json data' do
+        user_response = JSON.parse(response.body)
+        expect(user_response['email']).to eq(user_params[:email])
+      end
+    end
+
+    context 'when the request params are invalid' do
+      let(:user_params) { attributes_for(:user, email: 'invalid_email') }
+
+      it 'return status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'return the json data for the errors' do
+        user_response = JSON.parse(response.body)
+        expect(user_response).to have_key('errors')
+      end
+    end
+  end
 end

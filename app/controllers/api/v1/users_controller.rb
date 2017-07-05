@@ -8,4 +8,17 @@ class Api::V1::UsersController < ApplicationController
   rescue
     head 404
   end
+
+  def create
+    user = User.new(user_params)
+
+    return render json: { errors: user.errors }, status: 422 unless user.save
+    render json: user, status: 201
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:email, :password, :password_confirmation)
+  end
 end
