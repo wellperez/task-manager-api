@@ -10,10 +10,12 @@ RSpec.describe User, type: :model do
   it { is_expected.to validate_uniqueness_of(:auth_token) }
 
   describe '#info' do
-    it 'returns email and created_at' do
+    it 'returns email, created_at and a Token' do
       user.save!
+      allow(Devise).to receive(:friendly_token).and_return('abc123xyzTOKEN')
 
-      expect(user.info).to eq("#{user.email} - #{user.created_at}")
+      expect(user.info).to eq("#{user.email} - #{user.created_at}
+       - Token: #{Devise.friendly_token}")
     end
   end
 
@@ -33,15 +35,11 @@ RSpec.describe User, type: :model do
 
   # end
 
-
-
   # before { @user = FactoryGirl.build(:user) }
 
   # subject { FactoryGirl.build(:user) }
 
   # subject { build(:user) }
-
-
   # it { expect(@user).to respond_to(:email) }
   # it { expect(@user).to respond_to(:name) }
   # it { expect(@user).to respond_to(:password) }
@@ -53,5 +51,4 @@ RSpec.describe User, type: :model do
 
   # it { is_expected.to respond_to(:email) }
   # it { is_expected.to respond_to(:name) }
-
 end
