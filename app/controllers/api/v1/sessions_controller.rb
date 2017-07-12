@@ -10,10 +10,13 @@ class Api::V1::SessionsController < ApplicationController
     user.generate_authentication_token!
     user.save!
     render json: user, status: 200
+  end
 
-    # if user && user.valid_password?(session_params[:password])
-    #   render json: user, status: 200
-    # end
+  def destroy
+    user = User.find_by(auth_token: params[:id])
+    user.generate_authentication_token!
+    user.save
+    head 204
   end
 
   private
