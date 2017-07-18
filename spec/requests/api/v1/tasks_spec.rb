@@ -68,16 +68,20 @@ RSpec.describe 'Task API' do
       end
     end
 
-    # context 'when the request params are invalid' do
-    #   let(:user_params) { attributes_for(:user, email: 'invalid_email') }
-    #
-    #   it 'return status code 422' do
-    #     expect(response).to have_http_status(422)
-    #   end
-    #
-    #   it 'return the json data for the errors' do
-    #     expect(json_body).to have_key(:errors)
-    #   end
-    # end
+    context 'when the request params are invalid' do
+      let(:task_params) { attributes_for(:task, title: nil) }
+
+      it 'return status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'does not save the task in the database' do
+        expect(Task.find_by(title: task_params[:title])).to be_nil
+      end
+
+      it 'return the json data for the errors' do
+        expect(json_body[:errors]).to have_key(:title)
+      end
+    end
   end
 end
