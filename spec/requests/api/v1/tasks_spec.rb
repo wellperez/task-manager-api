@@ -43,4 +43,41 @@ RSpec.describe 'Task API' do
       end
     end
   end
+
+  describe 'POST /tasks' do
+    before do
+      post '/tasks', params: { task: task_params }.to_json, headers: headers
+    end
+    context 'when the request params are valid' do
+      let(:task_params) { FactoryGirl.attributes_for(:task) }
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'saves the task in the database' do
+        expect(Task.find_by(title: task_params[:title])).not_to be_nil
+      end
+
+      it 'returns json data' do
+        expect(json_body[:title]).to eq(task_params[:title])
+      end
+
+      it 'assigns the created task to the current user' do
+        expect(json_body[:user_id]).to eq(user.id)
+      end
+    end
+
+    # context 'when the request params are invalid' do
+    #   let(:user_params) { attributes_for(:user, email: 'invalid_email') }
+    #
+    #   it 'return status code 422' do
+    #     expect(response).to have_http_status(422)
+    #   end
+    #
+    #   it 'return the json data for the errors' do
+    #     expect(json_body).to have_key(:errors)
+    #   end
+    # end
+  end
 end
