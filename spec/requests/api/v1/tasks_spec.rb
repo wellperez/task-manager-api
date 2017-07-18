@@ -26,4 +26,21 @@ RSpec.describe 'Task API' do
       expect(json_body[:tasks].count).to eq(5)
     end
   end
+
+  describe 'GET /tasks/:id' do
+    let(:task) { create(:task, user_id: user.id) }
+    before do
+      get "/tasks/#{task.id}", params: {}, headers: headers
+    end
+
+    context 'when the tasks exists' do
+      it 'returns the task' do
+        expect(json_body[:title]).to eq(task.title)
+      end
+
+      it 'returns status 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+  end
 end
