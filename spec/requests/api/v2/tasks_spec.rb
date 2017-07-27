@@ -37,6 +37,12 @@ RSpec.describe 'Task API' do
       before do
         get '/tasks?q[title_cont]=note', params: {}, headers: headers
       end
+
+      it 'returns inly the tasks matching' do
+        returned_task_titles = json_body[:data].map { |t| t[:attributes][:title] }
+
+        expect(returned_task_titles).to eq([notebook_task_1.title, notebook_task_2.title])
+      end
     end
 
   end
